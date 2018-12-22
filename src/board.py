@@ -185,7 +185,10 @@ class board():
                                 break
                         if not upConstr:
                             for row2 in upConstr: 
-                                variables = [var if var.r == row2 and var.c == c for var in self.variables]
+                                variables = []
+                                for var in self.variables:
+                                    if (var.r == row2 and var.c == c):
+                                        variables.append(var)
                             self.constraints.append(constrain(self.square[r][c].topright, variables))
                         # look right
                         rightConstr = []
@@ -196,7 +199,10 @@ class board():
                                 break
                         if not rightConstr:
                             for col2 in rightConstr: 
-                                variables = [var if var.r == r and var.c == col2 for var in self.variables]
+                                variables = []
+                                for var in self.variables:
+                                    if (var.r == r and var.c == col2):
+                                        variables.append(var)
                             self.constraints.append(constrain(self.square[r][c].topright, variables))
                     # bottown down constraints
                     if self.square[r][c].bottomleft != 0:
@@ -209,7 +215,10 @@ class board():
                                 break
                         if not downConstr:
                             for row2 in downConstr: 
-                                variables = [var if var.r == row2 and var.c == c for var in self.variables]
+                                variables = []
+                                for var in self.variables:
+                                    if (var.r == row2 and var.c == c):
+                                        variables.append(var)
                             self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
                         # look left
                         leftConstr = []
@@ -220,5 +229,64 @@ class board():
                                 break
                         if not leftConstr:
                             for col2 in leftConstr: 
-                                variables = [var if var.r == r and var.c == col2 for var in self.variables]
+                                variables = []
+                                for var in self.variables:
+                                    if (var.r == r and var.c == col2):
+                                        variables.append(var)
                             self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
+    
+    def nodeConsistency(self):
+        # very easy. For each constraints remove from his domain variables which can't be solution
+        # aka variable has to be lower than the constraints value
+        for constrain in self.constraints:
+            if constrain.sum < 10:
+                for variable in constrain.variables:
+                    variable.domain.pop(range(constrain.sum, 10))
+
+    '''
+    def ArchConcistency(self):
+        for constrain in self.constraints:
+            for index, variable in enumerate(constrain.variables):
+                for D in variable.domain:
+    '''
+    def GeneralArchConsistency(self):
+        queue = self.constraints
+        while queue:
+            constrain = queue[0]
+            for index, variable in enumerate(constrain.variables):
+                for D in variable.domain:
+                    if not findSolutionPossibleSolution(constrain, D, index):
+                        variable.domain.remove(D)
+
+            queue.pop(0)   
+
+def findSolutionPossibleSolution(constrain, D, index):
+    domains = []
+    for i in range(len(constrain.variables)):
+        if i != index:
+            domains.append(constrain.variables[i].domain)
+    summ = constrain.sum - D
+    if findSolution(summ, domains):
+        return True
+    return False
+
+def findSolution(summ, domains):
+    if summ < 0:
+        return False
+    print(domains)
+    if len(domains) == 1:
+        print(domains)
+        #search the solution
+        for d in domains[0]:
+            if summ - int(d) == 0:
+                return True
+        return False
+    for d in domains[0]:
+        if findSolution(summ- d, domains[1:]):
+            return True
+    return False
+            
+
+
+
+
