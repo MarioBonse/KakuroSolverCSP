@@ -2,16 +2,34 @@ import random
 import csv
 
 class square():
-    def __init__(self, typesquare = "empty", topright = None, bottomleft = None):
+    def __init__(self, typesquare = "variable", topright = None, bottomleft = None):
         self.type = typesquare
         self.value = 0
-        self.domanin = [1,2,3,4,5,6,7,8,9]
         self.topright = topright
         self.bottomleft = bottomleft
+        self.domanin = [1,2,3,4,5,6,7,8,9]
+
+class variable():
+    def __init__(self, r , c):
+        self.c = c
+        self.r = r
+        self.value = 0
+        self.domanin = [1,2,3,4,5,6,7,8,9]
+
+class constrain():
+    def __init__(self, summ, variables):
+        self.variables = variables
+        self.sum = summ
+    
 
 
-# types are "empty", "tofill", "target".
-# empty can have value from 1 to 9, tofill can't have target
+        
+
+
+
+
+# types are "variable", "tofill", "constraints".
+# variable can have value from 1 to 9, tofill can't have constraints
 class board():
     def __init__(self, n_row, n_col, load = False):
         if not load:
@@ -36,11 +54,11 @@ class board():
                     if ( i == 3)  and (row != 0) and (col == 0):
                         print("+----+",end='')
                     if (i == 1 or i == 2) and (col == 0):
-                        if self.square[row][col].type == "empty":
+                        if self.square[row][col].type == "variable":
                             print("|    |", end = "")
                         elif self.square[row][col].type == "fill":
                             print("|----|", end = "")
-                        elif self.square[row][col].type == "target":
+                        elif self.square[row][col].type == "constraints":
                             if i == 1 and (self.square[row][col].topright != 0):
                                 if self.square[row][col].topright > 9:
                                     print('|\_%d|' %self.square[row][col].topright, end = "")
@@ -56,11 +74,11 @@ class board():
                             if i == 2 and (self.square[row][col].bottomleft == 0):
                                 print('|---\|', end = "")
                     if (i == 1 or i == 2) and (col != 0):
-                        if self.square[row][col].type == "empty":
+                        if self.square[row][col].type == "variable":
                             print("    |", end = "")
                         elif self.square[row][col].type == "fill":
                             print("----|", end = "")
-                        elif self.square[row][col].type == "target":
+                        elif self.square[row][col].type == "constraints":
                             if i == 1 and (self.square[row][col].topright != 0):
                                 if self.square[row][col].topright > 9:
                                     print('\_%d|' %self.square[row][col].topright, end = "")
@@ -83,25 +101,25 @@ class board():
     def fill(self):
         for r in range(self.n_row):
             for c in range(self.n_col):
-                self.square[r][c].type = "empty" 
+                self.square[r][c].type = "variable" 
         print("First: tell the black boxes:")
         for r in range(self.n_row): 
             inp = input("Row number %d write the coumn nubers which are black:" %r).split()
             for c in inp:
                 self.square[r][int(c)].type = "fill" 
-        print("Now tell the target coordinate in the top right position (later their value will be asked)")
+        print("Now tell the constraints coordinate in the top right position (later their value will be asked)")
         for r in range(self.n_row): 
             inp = input("Row number %d write the coumn nubers which are targhet for the row:" %r).split()
             for c in inp:
                 toprightvalue = input("The value")
-                self.square[r][int(c)].type = "target" 
+                self.square[r][int(c)].type = "constraints" 
                 self.square[r][int(c)].topright = int(toprightvalue) 
-        print("Now tell the target coordinate in the top right position (later their value will be asked)")
+        print("Now tell the constraints coordinate in the top right position (later their value will be asked)")
         for r in range(self.n_row): 
             inp = input("Row number %d write the coumn nubers which are targhet for the row:" %r).split()
             for c in inp:
                 toprightvalue = input("The value")
-                self.square[r][int(c)].type = "target" 
+                self.square[r][int(c)].type = "constraints" 
                 self.square[r][int(c)].bottomleft = int(toprightvalue) 
     
     def save(self):
@@ -111,7 +129,7 @@ class board():
             writer.writerow(results)
         
     def encode(self, r, c):
-        if self.square[r][c].type == "empty":
+        if self.square[r][c].type == "variable":
             return 0
         if self.square[r][c].type == "fill":
             return -1
@@ -120,11 +138,11 @@ class board():
 
     def decode(self, value):
         if int(value) == 0:
-            return ["empty", None, None]
+            return ["variable", None, None]
         if int(value) == -1:
             return ["fill", None, None]
         else:
-            return (["target", int(value)%100, int(value)/100])
+            return (["constraints", int(value)%100, int(value)/100])
 
     def load(self, name):
         reader = csv.reader(open(name, 'r'))
@@ -138,11 +156,69 @@ class board():
                 self.square[r][c].type = decoded[0] 
                 self.square[r][c].bottomleft = decoded[1]
                 self.square[r][c].topright = decoded[2]
-        
-
     
-
-
-
-        
-    #def solve(self):
+    # in order to make the game easier we do some problem reduction strategies:
+    # 1) Node consistency -> each cells has a domani with numbers values lower than the column targhet value
+    # 2) Arch consistency -> every couple of variable satisfy the costraints (double cells) we will apply AC-3 algorithm
+    # 3) Generalized arch concistency -> the same as before with 3 and 4 variable considered
+    
+    # This function translate the problem to CSP notation, with variables and constrain
+    def toCSP(self):
+        # 1 fill the variables
+        self.variables = []
+        for r in range(self.n_row):
+            for c in range(self.n_col):
+                if self.square[r][c].type == "variable":
+                    self.variables.append(variable(r, c))
+        self.constraints = []
+        # 2 fill the constraints
+        for r in range(self.n_row):
+            for c in range(self.n_col):
+                if self.square[r][c].type == "constraints":
+                    if self.square[r][c].topright != 0:
+                        # look up
+                        upConstr = []
+                        for i in range(1, r + 1):
+                            if self.square[r - i][c].type == "variable":
+                                upConstr.append(r - i)
+                            else:
+                                break
+                        if not upConstr:
+                            for row2 in upConstr: 
+                                variables = [var if var.r == row2 and var.c == c for var in self.variables]
+                            self.constraints.append(constrain(self.square[r][c].topright, variables))
+                        # look right
+                        rightConstr = []
+                        for i in range(1, self.n_col - c - 1):
+                            if self.square[r][c+i].type == "variable":
+                                rightConstr.append(c+i)
+                            else:
+                                break
+                        if not rightConstr:
+                            for col2 in rightConstr: 
+                                variables = [var if var.r == r and var.c == col2 for var in self.variables]
+                            self.constraints.append(constrain(self.square[r][c].topright, variables))
+                    # bottown down constraints
+                    if self.square[r][c].bottomleft != 0:
+                        # look down
+                        downConstr = []
+                        for i in range(1, self.n_row - r - 1):
+                            if self.square[r + i][c].type == "variable":
+                                downConstr.append(r + i)
+                            else:
+                                break
+                        if not downConstr:
+                            for row2 in downConstr: 
+                                variables = [var if var.r == row2 and var.c == c for var in self.variables]
+                            self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
+                        # look left
+                        leftConstr = []
+                        for i in range(1, c + 1):
+                            if self.square[r][c-i].type == "variable":
+                                leftConstr.append(c-i)
+                            else:
+                                break
+                        if not leftConstr:
+                            for col2 in leftConstr: 
+                                variables = [var if var.r == r and var.c == col2 for var in self.variables]
+                            self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
