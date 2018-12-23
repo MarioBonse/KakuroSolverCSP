@@ -2,7 +2,7 @@ import random
 import csv
 
 class square():
-    def __init__(self, typesquare = "variable", topright = None, bottomleft = None):
+    def __init__(self, typesquare = "variable", topright = 0, bottomleft = 0):
         self.type = typesquare
         self.value = 0
         self.topright = topright
@@ -31,13 +31,14 @@ class constrain():
 # types are "variable", "tofill", "constraints".
 # variable can have value from 1 to 9, tofill can't have constraints
 class board():
-    def __init__(self, n_row, n_col, load = False):
+    def __init__(self, n_row = 12, n_col = 12, load = False, name = ""):
         if not load:
             self.n_row = n_row
             self.n_col = n_col
+            print("not loaded")
             self.square = [[square() for row in range(n_col) ]for col in range(n_row)]
         else:
-            self.load("table.csv")
+            self.load(name)
         
 
     def print(self):
@@ -113,18 +114,18 @@ class board():
             for c in inp:
                 toprightvalue = input("The value")
                 self.square[r][int(c)].type = "constraints" 
-                self.square[r][int(c)].topright = int(toprightvalue) 
-        print("Now tell the constraints coordinate in the top right position (later their value will be asked)")
+                self.square[r][int(c)].topright = int(toprightvalue.split()[0]) 
+        print("Now tell the constraints coordinate in the top bottom-left (later their value will be asked)")
         for r in range(self.n_row): 
             inp = input("Row number %d write the coumn nubers which are targhet for the row:" %r).split()
             for c in inp:
                 toprightvalue = input("The value")
                 self.square[r][int(c)].type = "constraints" 
-                self.square[r][int(c)].bottomleft = int(toprightvalue) 
+                self.square[r][int(c)].bottomleft = int(toprightvalue.split()[0]) 
     
-    def save(self):
+    def save(self, name):
         table = [[self.encode(r, c) for c in range(self.n_col)] for r in range(self.n_row)]
-        writer = csv.writer(open("table.csv", 'w'))
+        writer = csv.writer(open(name+".csv", 'w'))
         for results in table:
             writer.writerow(results)
         
@@ -134,13 +135,13 @@ class board():
         if self.square[r][c].type == "fill":
             return -1
         else:
-            return (self.square[r][c].bottomleft*100) + self.square[r][c].topright
+            return (int(self.square[r][c].bottomleft)*100) + int(self.square[r][c].topright)
 
     def decode(self, value):
         if int(value) == 0:
-            return ["variable", None, None]
+            return ["variable", 0, 0]
         if int(value) == -1:
-            return ["fill", None, None]
+            return ["fill", 0, 0]
         else:
             return (["constraints", int(value)%100, int(value)/100])
 
@@ -154,8 +155,8 @@ class board():
             for c in range(self.n_col):
                 decoded = self.decode(table[r][c])
                 self.square[r][c].type = decoded[0] 
-                self.square[r][c].bottomleft = decoded[1]
-                self.square[r][c].topright = decoded[2]
+                self.square[r][c].topright = int(decoded[1])
+                self.square[r][c].bottomleft = int(decoded[2])
     
     # in order to make the game easier we do some problem reduction strategies:
     # 1) Node consistency -> each cells has a domani with numbers values lower than the column targhet value
@@ -262,28 +263,39 @@ class board():
 
 def findSolutionPossibleSolution(constrain, D, index):
     domains = []
+    used = [D]
     for i in range(len(constrain.variables)):
         if i != index:
             domains.append(constrain.variables[i].domain)
     summ = constrain.sum - D
-    if findSolution(summ, domains):
+    if findSolution(summ, domains, used):
         return True
     return False
 
-def findSolution(summ, domains):
+# function that search a solution in the array using different numbers
+# function that search a solution in the array using different numbers
+def findSolution(summ, domains, used):
     if summ < 0:
         return False
-    print(domains)
     if len(domains) == 1:
-        print(domains)
+        #print(domains)
         #search the solution
         for d in domains[0]:
-            if summ - int(d) == 0:
-                return True
+            bb = d in used
+            #print("d = %d and it is %d that it is in used" %(d, not(d in used)), used)
+            if not(d in used):
+                if summ - int(d) == 0:
+                    return True
         return False
+    #print(used)
     for d in domains[0]:
-        if findSolution(summ- d, domains[1:]):
-            return True
+        u = used[:]
+        u.append(d)
+        #print(d)
+        #print("d = %d and it is %d that it is not in used" %(d, not(d in used)), used)
+        if not(d in used):
+            if findSolution(summ - d, domains[1:], u):
+                return True
     return False
             
 
