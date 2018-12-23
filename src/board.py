@@ -179,6 +179,7 @@ class board():
                 if self.square[r][c].type == "constraints":
                     if self.square[r][c].topright != 0:
                         # look up
+                        '''
                         upConstr = []
                         for i in range(1, r + 1):
                             if self.square[r - i][c].type == "variable":
@@ -195,6 +196,7 @@ class board():
                             self.constraints.append(constr)
                             for var in variables:
                                     var.constrain.append(constr)
+                        '''
                         # look right
                         rightConstr = []
                         for i in range(1, self.n_col - c):
@@ -212,7 +214,7 @@ class board():
                             self.constraints.append(constr)
                             for var in variables:
                                     var.constrain.append(constr)
-                    # bottown down constraints
+                    # bottown constraints
                     if self.square[r][c].bottomleft != 0:
                         # look down
                         downConstr = []
@@ -232,6 +234,7 @@ class board():
                             for var in variables:
                                     var.constrain.append(constr)
                         # look left
+                        '''
                         leftConstr = []
                         for i in range(1, c + 1):
                             if self.square[r][c-i].type == "variable":
@@ -248,6 +251,7 @@ class board():
                             self.constraints.append(constr)
                             for var in variables:
                                     var.constrain.append(constr)
+                        '''
     
     def nodeConsistency(self):
         # very easy. For each constraints remove from his domain variables which can't be solution
