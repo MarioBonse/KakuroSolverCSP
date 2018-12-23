@@ -2,11 +2,15 @@
 import board
 
 def main():
-    sq = board.board(6,10)
+    try:
+        sq = board.board(load = True, name = "test_2.csv")
+    except:
+        sq = board.board(load = True, name = "src/test_2.csv")
     sq.print()
-    sq.fill()
-    #sq.print()
-    sq.save()
+    sq.toCSP()
+    sq.nodeConsistency()
+    sq.GeneralArchConsistency()
+    print("ehiehi")
 
 if __name__ == "__main__":
     main()

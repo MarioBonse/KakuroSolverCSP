@@ -7,14 +7,15 @@ class square():
         self.value = 0
         self.topright = topright
         self.bottomleft = bottomleft
-        self.domanin = [1,2,3,4,5,6,7,8,9]
+        self.domain = [1,2,3,4,5,6,7,8,9]
 
 class variable():
     def __init__(self, r , c):
+        self.constrain = []
         self.c = c
         self.r = r
         self.value = 0
-        self.domanin = [1,2,3,4,5,6,7,8,9]
+        self.domain = [1,2,3,4,5,6,7,8,9]
 
 class constrain():
     def __init__(self, summ, variables):
@@ -184,43 +185,52 @@ class board():
                                 upConstr.append(r - i)
                             else:
                                 break
-                        if not upConstr:
+                        if upConstr:
+                            variables = []
                             for row2 in upConstr: 
-                                variables = []
                                 for var in self.variables:
                                     if (var.r == row2 and var.c == c):
                                         variables.append(var)
-                            self.constraints.append(constrain(self.square[r][c].topright, variables))
+                            constr = constrain(self.square[r][c].topright, variables)
+                            self.constraints.append(constr)
+                            for var in variables:
+                                    var.constrain.append(constr)
                         # look right
                         rightConstr = []
-                        for i in range(1, self.n_col - c - 1):
+                        for i in range(1, self.n_col - c):
                             if self.square[r][c+i].type == "variable":
                                 rightConstr.append(c+i)
                             else:
                                 break
-                        if not rightConstr:
+                        if rightConstr:
+                            variables = []
                             for col2 in rightConstr: 
-                                variables = []
                                 for var in self.variables:
                                     if (var.r == r and var.c == col2):
                                         variables.append(var)
-                            self.constraints.append(constrain(self.square[r][c].topright, variables))
+                            constr = constrain(self.square[r][c].topright, variables)
+                            self.constraints.append(constr)
+                            for var in variables:
+                                    var.constrain.append(constr)
                     # bottown down constraints
                     if self.square[r][c].bottomleft != 0:
                         # look down
                         downConstr = []
-                        for i in range(1, self.n_row - r - 1):
+                        for i in range(1, self.n_row - r):
                             if self.square[r + i][c].type == "variable":
                                 downConstr.append(r + i)
                             else:
                                 break
-                        if not downConstr:
+                        if downConstr:
+                            variables = []
                             for row2 in downConstr: 
-                                variables = []
                                 for var in self.variables:
                                     if (var.r == row2 and var.c == c):
                                         variables.append(var)
-                            self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
+                            constr = constrain(self.square[r][c].bottomleft, variables)
+                            self.constraints.append(constr)
+                            for var in variables:
+                                    var.constrain.append(constr)
                         # look left
                         leftConstr = []
                         for i in range(1, c + 1):
@@ -228,21 +238,27 @@ class board():
                                 leftConstr.append(c-i)
                             else:
                                 break
-                        if not leftConstr:
+                        if leftConstr:
+                            variables = []
                             for col2 in leftConstr: 
-                                variables = []
                                 for var in self.variables:
                                     if (var.r == r and var.c == col2):
                                         variables.append(var)
-                            self.constraints.append(constrain(self.square[r][c].bottomleft, variables))
+                            constr = constrain(self.square[r][c].bottomleft, variables)
+                            self.constraints.append(constr)
+                            for var in variables:
+                                    var.constrain.append(constr)
     
     def nodeConsistency(self):
         # very easy. For each constraints remove from his domain variables which can't be solution
         # aka variable has to be lower than the constraints value
         for constrain in self.constraints:
             if constrain.sum < 10:
-                for variable in constrain.variables:
-                    variable.domain.pop(range(constrain.sum, 10))
+                for var in constrain.variables:
+                    topp = var.domain[-1]
+                    if topp >= constrain.sum:
+                        for x in range(constrain.sum, topp + 1):
+                            var.domain.remove(x)
 
     '''
     def ArchConcistency(self):
@@ -251,13 +267,24 @@ class board():
                 for D in variable.domain:
     '''
     def GeneralArchConsistency(self):
-        queue = self.constraints
+        queue = [None]*len(self.constraints)
+        queue[:] = self.constraints[:]
         while queue:
             constrain = queue[0]
             for index, variable in enumerate(constrain.variables):
+                toremove = []
                 for D in variable.domain:
-                    if not findSolutionPossibleSolution(constrain, D, index):
-                        variable.domain.remove(D)
+                    if not (findSolutionPossibleSolution(constrain, D, index)):
+                        toremove.append(D)
+                        for constr in  variable.constrain:
+                            if constr != constrain and (not (constr in queue)):
+                                queue.append(constr)
+                for rm in toremove:
+                    variable.domain.remove(rm)
+                if not variable.domain:
+                    print("Problem without solutions. \n")
+                    print("Variable at row: %d column: %d has no solution"%(variable.r, variable.c))
+                    return False
 
             queue.pop(0)   
 
@@ -280,12 +307,10 @@ def findSolution(summ, domains, used):
     if len(domains) == 1:
         #print(domains)
         #search the solution
-        for d in domains[0]:
-            bb = d in used
-            #print("d = %d and it is %d that it is in used" %(d, not(d in used)), used)
-            if not(d in used):
-                if summ - int(d) == 0:
-                    return True
+        if summ in used:
+            return False
+        if summ in domains[0]:
+            return True
         return False
     #print(used)
     for d in domains[0]:
