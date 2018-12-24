@@ -6,7 +6,7 @@ The algorithm exceed the rule that the sum over a row must equal to the value on
 The solution it's also unique.
 This is an example of a problem:
 <div>
-  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroUnsolved.png" width="320" height="500" />
+  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/images/kakuroUnsolved.png" width="320" height="400" />
   </div>
 In order to find the numbers that solves the problem we will works in three steps:  
 
@@ -20,7 +20,7 @@ We make a structure made of constraints. For each of them we will try to find if
 ## Result
 This is the result of the game showed before:
 <div>
-  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroSolved.png" width="320" height="500" />
+  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/images/kakuroSolved.png" width="320" height="400" />
   </div>
 
 ## How to run it
