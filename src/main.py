@@ -1,11 +1,11 @@
-#../CSP/bin/cd spython3
+#!/usr/bin/python3
 import board
 
 def main():
     try:
-        sq = board.board(load = True, name = "test_2.csv")
+        sq = board.board(load = True, name = "../KakuroStored/test_2.csv")
     except:
-        sq = board.board(load = True, name = "src/test_2.csv")
+        sq = board.board(load = True, name = "KakuroStored/test_2.csv")
     sq.print()
     sq.toCSP()
     sq.nodeConsistency()

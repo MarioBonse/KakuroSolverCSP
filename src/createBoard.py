@@ -1,4 +1,4 @@
-#../CSP/bin/cd spython3
+#!/usr/bin/python3
 import board
 
 def main():
