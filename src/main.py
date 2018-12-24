@@ -10,7 +10,10 @@ def main():
     sq.toCSP()
     sq.nodeConsistency()
     sq.GeneralArchConsistency()
-    print("ehiehi")
+    print("\n\n")
+    sq.solve()
+    print("\n")
+
 
 if __name__ == "__main__":
     main()

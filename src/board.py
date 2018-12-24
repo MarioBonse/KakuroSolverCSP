@@ -22,13 +22,6 @@ class constrain():
         self.variables = variables
         self.sum = summ
     
-
-
-        
-
-
-
-
 # types are "variable", "tofill", "constraints".
 # variable can have value from 1 to 9, tofill can't have constraints
 class board():
@@ -57,7 +50,10 @@ class board():
                         print("+----+",end='')
                     if (i == 1 or i == 2) and (col == 0):
                         if self.square[row][col].type == "variable":
-                            print("|    |", end = "")
+                            if self.square[row][col].value == 0 or i == 2:
+                                print("|    |", end = "")
+                            else:
+                                print("|  %d |" % self.square[row][col].value, end = "")
                         elif self.square[row][col].type == "fill":
                             print("|----|", end = "")
                         elif self.square[row][col].type == "constraints":
@@ -77,7 +73,10 @@ class board():
                                 print('|---\|', end = "")
                     if (i == 1 or i == 2) and (col != 0):
                         if self.square[row][col].type == "variable":
-                            print("    |", end = "")
+                            if self.square[row][col].value == 0 or i == 2:
+                                print("    |", end = "")
+                            else:
+                                print("  %d |" % self.square[row][col].value, end = "")
                         elif self.square[row][col].type == "fill":
                             print("----|", end = "")
                         elif self.square[row][col].type == "constraints":
@@ -292,6 +291,20 @@ class board():
 
             queue.pop(0)   
 
+    def solve(self):
+        for row in range(self.n_row):
+            for col in range(self.n_col):
+                if self.square[row][col].type == "variable":
+                    self.square[row][col].value = self.findValue(row, col)
+        self.print()
+    
+    def findValue(self, row, colomn):
+        for var in self.variables:
+            if var.c == colomn and var.r == row:
+                var.value = var.domain[0]
+                return var.value
+
+
 def findSolutionPossibleSolution(constrain, D, index):
     domains = []
     used = [D]
@@ -327,7 +340,6 @@ def findSolution(summ, domains, used):
                 return True
     return False
             
-
 
 
 
