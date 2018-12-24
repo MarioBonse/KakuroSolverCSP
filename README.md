@@ -6,7 +6,7 @@ The algorithm exceed the rule that the sum over a row must equal to the value on
 The solution it's also unique.
 This is an example of a problem:
 <div>
-  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroUnsolved.png" width="320" height="240" />
+  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroUnsolved.png" width="320" height="500" />
   </div>
 In order to find the numbers that solves the problem we will works in three steps:
 1) The board expressed as a matrix is translated to another structure (like a hypergraph). It represents the empty cells as  "variables type" with a domain which is originally [1,2,3,4,5,6,7,8,9] (aka range(1,10)). They are like the nodes of the hypergraph. Then there is another object, the constraints, which are a lists of variables with a number that is the sum that the variables have to reach. It's like the hyper-arch of the hypergraph.
@@ -16,7 +16,9 @@ We make a structure made of constraints. For each of them we will try to find if
 
 ## Result
 This is the result of the game showed before:
-![](https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroSolved.png)
+<div>
+  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/kakuroSolved.png" width="320" height="500" />
+  </div>
 
 ## How to run it
 It's very very simple. There are not dependencies, you just need python3.
