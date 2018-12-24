@@ -129,7 +129,7 @@ class board():
     
     def save(self, name):
         table = [[self.encode(r, c) for c in range(self.n_col)] for r in range(self.n_row)]
-        writer = csv.writer(open(name+".csv", 'w'))
+        writer = csv.writer(open("../KakuroStored/"+name+".csv", 'w'))
         for results in table:
             writer.writerow(results)
         

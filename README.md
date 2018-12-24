@@ -34,6 +34,11 @@ Then solve it with the command
 ```
 python3 main.py
 ```
+and it runs the default example.
+You can run the example you have entered with 
+```
+python3 main.py <examplename>
+```
 That's all
 
 ## Author
