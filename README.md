@@ -4,35 +4,35 @@ You can write your problem, using the file [createBoard.py].(https://github.com/
 ## Algorithm
 The algorithm exceed the rule that the sum over a row must equal to the value on the left and the sum over a column must be equal to the value on the bottom of the cells with the diagonal and one or two numbers. The numbers on each rows and columns has also to be unique.
 The solution it's also unique.
-This is an example of a problem:
-+----+----+----+----+----+----+----+----+
-|----|----|----|\---|\---|----|----|----|
-|----|----|----| 5 \|14 \|----|----|----|
-+----+----+----+----+----+----+----+----+
-|----|\---|\__7|    |    |\---|\---|----|
-|----| 9 \|15 \|    |    |17 \|15 \|----|
-+----+----+----+----+----+----+----+----+
-|\_38|    |    |    |    |    |    |----|
-|---\|    |    |    |    |    |    |----|
-+----+----+----+----+----+----+----+----+
-|\_13|    |    |----|\_12|    |    |----|
-|---\|    |    |----|11 \|    |    |----|
-+----+----+----+----+----+----+----+----+
-|----|----|----|\_11|    |    |----|----|
-|----|----|----| 6 \|    |    |----|----|
-+----+----+----+----+----+----+----+----+
-|----|----|\__7|    |    |----|\---|\---|
-|----|----| 6 \|    |    |----|10 \| 5 \|
-+----+----+----+----+----+----+----+----+
-|----|\__6|    |    |\---|\__5|    |    |
-|----|---\|    |    | 9 \|16 \|    |    |
-+----+----+----+----+----+----+----+----+
-|----|\_25|    |    |    |    |    |    |
-|----|---\|    |    |    |    |    |    |
-+----+----+----+----+----+----+----+----+
-|----|----|----|\_14|    |    |----|----|
-|----|----|----|---\|    |    |----|----|
-+----+----+----+----+----+----+----+----+
+This is an example of a problem:<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|----|----|\---|\---|----|----|----|<\br>
+|----|----|----| 5 \|14 \|----|----|----|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|\---|\__7|    |    |\---|\---|----|<\br>
+|----| 9 \|15 \|    |    |17 \|15 \|----|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|\_38|    |    |    |    |    |    |----|<\br>
+|---\|    |    |    |    |    |    |----|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|\_13|    |    |----|\_12|    |    |----|<\br>
+|---\|    |    |----|11 \|    |    |----|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|----|----|\_11|    |    |----|----|<\br>
+|----|----|----| 6 \|    |    |----|----|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|----|\__7|    |    |----|\---|\---|<\br>
+|----|----| 6 \|    |    |----|10 \| 5 \|<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|\__6|    |    |\---|\__5|    |    |<\br>
+|----|---\|    |    | 9 \|16 \|    |    |<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|\_25|    |    |    |    |    |    |<\br>
+|----|---\|    |    |    |    |    |    |<\br>
++----+----+----+----+----+----+----+----+<\br>
+|----|----|----|\_14|    |    |----|----|<\br>
+|----|----|----|---\|    |    |----|----|<\br>
++----+----+----+----+----+----+----+----+<\br>
 In order to find the numbers that solves the problem we will works in three steps:
 1) The board expressed as a matrix is translated to another structure (like a hypergraph). It represents the empty cells as  "variables type" with a domain which is originally [1,2,3,4,5,6,7,8,9] (aka range(1,10)). They are like the nodes of the hypergraph. Then there is another object, the constraints, which are a lists of variables with a number that is the sum that the variables have to reach. It's like the hyper-arch of the hypergraph.
 2) Reduce the domains of the variables with the "Node consistency" technique. A variable can't be higher or equal to the sum that has to reach so we can delete the elements in the domains which are greater than the sum.
@@ -82,5 +82,5 @@ python3 main.py
 ```
 That's all
 
-## Authors
+## Author
 * **Mario Bonsembiante** :nerd_face: - [MarioBonse](https://github.com/MarioBonse)
