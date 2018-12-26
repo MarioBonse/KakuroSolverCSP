@@ -28,13 +28,14 @@ class constrain():
 # It has the cells and then can be converted as CSP notation, a graph with variables (which are the nodes)
 # And archs (which are the constraints)
 class board():
-    def __init__(self, n_row = 12, n_col = 12, load = False, name = ""):
+    def __init__(self, n_row = 12, n_col = 12, load = False, name = "", web = False):
+        if web:
+            self.fromWebObject(name)
         if not load:
             self.n_row = n_row
             self.n_col = n_col
-            print("not loaded")
             self.Cell = [[Cell() for row in range(n_col) ]for col in range(n_row)]
-        else:
+        if (not web )and load:
             self.load(name)
         
     # Function that show the board int the terminal
@@ -162,7 +163,27 @@ class board():
                 self.Cell[r][c].type = decoded[0] 
                 self.Cell[r][c].topright = int(decoded[1])
                 self.Cell[r][c].bottomleft = int(decoded[2])
-    
+
+    def fromWebObject(self, name):
+        print(name)
+        file = open(name,'r') 
+        lines = file.readlines()
+        self.n_row = len(lines)
+        self.n_col = len(lines[0][lines[0].find("[") + 1:lines[0].find("]")].split(","))
+        self.Cell = [[Cell() for row in range(self.n_col) ]for col in range(self.n_row)]
+        for r, line in enumerate(lines):
+            array = line[line.find("[") + 1:line.find("]")].split(",")
+            for c, x in enumerate(array):
+                self.Cell[r][c].type, self.Cell[r][c].topright, self.Cell[r][c].bottomleft = self.decodeWeb(x)
+            
+    def decodeWeb(self, value):
+            if int(value) == 0:
+                return ["variable", 0, 0]
+            if int(value) == -1:
+                return ["fill", 0, 0]
+            else:
+                return (["constraints", int(int(value)/1000), int((int(value)%1000)/10)])
+            
 
     '''
     NOW This is the algorithm part of this project. 
@@ -243,7 +264,7 @@ class board():
 
     # the most important function for the solver.
     # It find the value in the domain that satisfy the constrain
-    def GeneralArchConsistency(self):
+    def generalArchConsistency(self):
         queue = [None]*len(self.constraints)
         queue[:] = self.constraints[:]
         while queue:
@@ -266,6 +287,9 @@ class board():
             queue.pop(0)   
 
     def solve(self):
+        self.toCSP()
+        self.nodeConsistency()
+        self.generalArchConsistency()
         for row in range(self.n_row):
             for col in range(self.n_col):
                 if self.Cell[row][col].type == "variable":

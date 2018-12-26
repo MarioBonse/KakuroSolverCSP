@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import board
 import sys
+import time
+
 def main():
     if len(sys.argv)==1:
         name = "test_2"
@@ -11,12 +13,10 @@ def main():
     except:
         sq = board.board(load = True, name = "KakuroStored/"+name+".csv")
     sq.print()
-    sq.toCSP()
-    sq.nodeConsistency()
-    sq.GeneralArchConsistency()
-    print("\n\n")
+    print("\n\n THE SOLUTION IS:")
+    start = time.time()
     sq.solve()
-    print("\n")
+    print("in %.10f seconds" %(time.time()- start))
 
 
 if __name__ == "__main__":
