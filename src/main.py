@@ -5,7 +5,7 @@ import time
 
 def main():
     if len(sys.argv)==1:
-        name = "test_2"
+        name = "test_10(30x30!)"
     else:
         name = sys.argv[1]
     try:

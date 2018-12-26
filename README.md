@@ -22,6 +22,10 @@ This is the result of the game showed before:
 <div>
   <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/images/kakuroSolved.png" width="320" height="400" />
   </div>
+It solves also much bigger puzzles as:
+<div>
+  <img src="https://github.com/MarioBonse/KakuroSolverCSP/blob/master/images/kakuro30x30.png" width="320" height="400" />
+  </div>
 
 ## How to run it
 It's very very simple. There are not dependencies, you just need python3.
