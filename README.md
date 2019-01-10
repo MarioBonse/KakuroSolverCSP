@@ -1,9 +1,9 @@
 # KakuroSolverCSP
 Solver of the japanese game kakuro viewed as CSP problem.
 You can write your problem, using the file createBoard.py.
-For the game rules of the game you can see <a href = "https://en.wikipedia.org/wiki/Kakuro">the wiki page about Kakuro</a>.
+For the game rules of the game you can see <a href = "https://en.wikipedia.org/wiki/Kakuro">the wiki page on Kakuro</a>.
 ## Algorithm
-The algorithm exceed the rule that the sum over a row must equal to the value on the left and the sum over a column must be equal to the value on the bottom of the cells with the diagonal and one or two numbers. The numbers on each rows and columns has also to be unique.
+The algorithm exceed the rules that the sum over a row must equal to the value on the left and the sum over a column must be equal to the value on the bottom of the cells with the diagonal and one or two numbers. The numbers on each rows and columns has also to be unique.
 The solution it's also unique.
 This is an example of a problem:
 <div>
@@ -11,7 +11,7 @@ This is an example of a problem:
   </div>
 In order to find the numbers that solves the problem we will works in three steps:  
 
-1) The board expressed as a matrix is translated to another structure (like a hypergraph). It represents the empty cells as  "variables type" with a domain which is originally [1,2,3,4,5,6,7,8,9] (aka range(1,10)). They are like the nodes of the hypergraph. Then there is another object, the constraints, which are a lists of variables with a number that is the sum that the variables have to reach. It's like the hyper-arch of the hypergraph.  
+1) The board expressed as a matrix is translated to another structure (an hypergraph). It represents the empty cells as  "variables type" with a domain which is originally [1,2,3,4,5,6,7,8,9] (aka range(1,10)). They are the nodes of the hypergraph. Then there is another object, the constraints, which are a lists of variables with a number that is the sum that the variables have to reach. It's like the hyper-arch of the hypergraph. The constain ha also an implicit rule, that the variables have to be different on each constrain.  
 
 2) Reduce the domains of the variables with the "Node consistency" technique. A variable can't be higher or equal to the sum that has to reach so we can delete the elements in the domains which are greater than the sum.  
 
