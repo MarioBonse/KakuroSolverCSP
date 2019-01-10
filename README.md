@@ -1,6 +1,7 @@
 # KakuroSolverCSP
 Solver of the japanese game kakuro viewed as CSP problem.
-You can write your problem, using the file [createBoard.py].(https://github.com/MarioBonse/KakuroSolverCSP/blob/master/src/createBoard.py)
+You can write your problem, using the file createBoard.py.
+For the game rules of the game you can see <a href = "https://en.wikipedia.org/wiki/Kakuro">the wiki page about Kakuro</a>.
 ## Algorithm
 The algorithm exceed the rule that the sum over a row must equal to the value on the left and the sum over a column must be equal to the value on the bottom of the cells with the diagonal and one or two numbers. The numbers on each rows and columns has also to be unique.
 The solution it's also unique.
