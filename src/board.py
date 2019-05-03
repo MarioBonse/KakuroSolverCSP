@@ -1,3 +1,11 @@
+#####################################
+#
+# Title:  Kakuro Solver as CSP problem
+# Author: Mario Bonsembiante
+# Date:   jan 2019
+#
+#####################################
+
 import sys
 import csv
 

@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+#####################################
+#
+# Title:  Kakuro Solver as CSP problem
+# Author: Mario Bonsembiante
+# Date:   jan 2019
+#
+#####################################
 import board
 import sys
 import time
